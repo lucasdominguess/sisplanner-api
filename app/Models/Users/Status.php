@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models\Users;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Status extends Model
+{
+    /** @use HasFactory<\Database\Factories\Users\StatusFactory> */
+    use HasFactory;
+
+    protected $table = 'status';
+      public  $timestamps = false;
+}
