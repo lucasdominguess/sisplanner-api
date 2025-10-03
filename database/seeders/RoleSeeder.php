@@ -13,9 +13,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::factory()->createMany([
-            ['name' => 'Administrador'],
-            ['name' => 'Usuário'],
-        ]);
+      Role::create(['name' => 'Administrador']);
+      Role::create(['name' => 'Usuario']);
     }
 }
