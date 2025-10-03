@@ -12,4 +12,8 @@ class Status extends Model
 
     protected $table = 'status';
       public  $timestamps = false;
+      public function users()
+      {
+          return $this->hasMany(User::class);
+      } 
 }

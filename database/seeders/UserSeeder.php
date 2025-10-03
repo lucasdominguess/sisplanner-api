@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
             'name' => 'lucas domingues',
             'email' => 'lucasdomingues@sp.senai.br',
             'password' => bcrypt('12345678'),
-            'role_id' => 1,
             'status_id' => 1
         ]);
         User::factory(10)->create();

@@ -13,9 +13,7 @@ class StatusSeeder extends Seeder
      */
     public function run(): void
     {
-        Status::factory()->createMany([
-            ['name' => 'Ativo'],
-            ['name' => 'Inativo'],
-        ]);
+         Status::create(['name' => 'Ativo']);
+        Status::create(['name' => 'Inativo']);
     }
 }
