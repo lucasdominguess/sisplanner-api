@@ -23,6 +23,7 @@ class User  extends Authenticatable implements JWTSubject
     ];
     protected $hidden = [
         'password',
+        'pivot',
 
     ];
      protected function casts(): array
@@ -31,6 +32,7 @@ class User  extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+    protected $with = ['roles','status'];
     public function roles()
     {
         return $this->belongsToMany(Role::class);
@@ -51,6 +53,13 @@ class User  extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return []; // Você pode adicionar claims customizadas aqui se precisar
+        return [
+            'roles' => $this->load('roles')->roles
+        ]; // Você pode adicionar claims customizadas aqui se precisar
     }
+    public function hasRole(string $roleName): bool
+{
+    // Verifica se na coleção de roles do usuário existe alguma com o nome passado.
+    return $this->roles->contains('name', $roleName);
+}
 }

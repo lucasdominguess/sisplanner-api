@@ -12,9 +12,12 @@ class Role extends Model
 
     protected $table = 'roles';
 
-  public  $timestamps = false;
+    protected $fillable = ['name'];
+    protected $hidden = ['pivot'];
 
-  public function users()
+    public $timestamps = false;
+
+    public function users()
     {
         return $this->belongsToMany(User::class);
     }

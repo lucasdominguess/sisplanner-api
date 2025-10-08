@@ -11,9 +11,12 @@ class Status extends Model
     use HasFactory;
 
     protected $table = 'status';
-      public  $timestamps = false;
-      public function users()
-      {
-          return $this->hasMany(User::class);
-      } 
+
+    protected $fillable = ['name'];
+    protected $hidden = ['pivot'];
+    public $timestamps = false;
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

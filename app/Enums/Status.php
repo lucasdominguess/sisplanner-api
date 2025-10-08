@@ -8,7 +8,7 @@ enum Status: int
     case INACTIVE = 2;
 
     // Esta é uma função útil que não precisa de parâmetros
-    public function getLabel(): int
+    public function label(): int
     {
         return match ($this) {
             self::ACTIVE => 1,
