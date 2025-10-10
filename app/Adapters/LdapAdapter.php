@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Classes;
+namespace App\Adapters;
 
-use App\Interface\LdapInterface;
+use App\Interfaces\LdapInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
 use RuntimeException;

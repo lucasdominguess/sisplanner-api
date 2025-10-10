@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Enums\Roles;
 use App\Enums\Status;
 use App\Models\Users\User;
-use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -17,8 +19,19 @@ class AuthController extends Controller
     public function register(UserRegisterRequest $request)
     {
         $validated = $request->validated();
-        $user = User::create($validated);
-        $user->roles()->sync([2]);
+
+        $user = DB::transaction(function () use ($validated) {
+            $validated['status_id'] = Status::INACTIVE->value;
+            $user = User::create($validated);
+
+            // sync() ou attach() funcionam aqui. attach() é um pouco mais semântico para um novo registro.
+            // $user->roles()->sync([Roles::USER->value]);
+            $user->roles()->attach(Roles::USER->value);
+
+        return $user;
+    });
+
+        Log::info('Usuário criado com sucesso: ' . $user->name);
         return response()->json(['message' => 'Usuário criado com sucesso! Aguarde ativação pelo Administrador', 'user' => $user], 201);
     }
 
@@ -43,6 +56,27 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $credentials['email'],
-        ], 200, ['Authorization' => $token]);
+        ], 200, ['access_token' => $token, 'token_type' => 'bearer']);
+    }
+    public function logout()
+    {
+        auth('api')->logout();
+        return response()->json(['message' => 'Logout realizado com sucesso']);
+    }
+
+
+    public function refresh()
+    {
+        $newToken = auth('api')->refresh();
+        return $this->respondWithToken($newToken);
+    }
+    protected function respondWithToken(string $token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'user' => auth('api')->user()
+        ]);
     }
 }

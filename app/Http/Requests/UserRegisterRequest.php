@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -26,7 +27,13 @@ class UserRegisterRequest extends FormRequest
         return [
             'name'=>['required','min:3','max:70'],
             'email'=>['required','email','unique:users'],
-            'password'=>['required','min:8','max:70'],
+            'password'=>['required',
+            Password::min(8) // Mínimo de 8 caracteres
+                ->letters()    // Exige pelo menos uma letra
+                ->mixedCase()  // Exige letras maiúsculas e minúsculas
+                ->numbers()    // Exige pelo menos um número
+                ->symbols()    // Exige pelo menos um símbolo (ex: @, #, !)],
+        ]
         ];
     }
     public function messages(){
@@ -40,6 +47,11 @@ class UserRegisterRequest extends FormRequest
             'password.required' => 'O campo senha é obrigatório',
             'password.min' => 'O campo senha deve conter no mínimo 8 caracteres',
             'password.max' => 'O campo senha deve conter no máximo 70 caracteres',
+            'password.letters' => 'O campo senha deve conter pelo menos uma letra',
+            'password.mixed' => 'O campo senha deve conter pelo menos uma letra maiúscula e uma letra minúscula',
+            'password.numbers' => 'O campo senha deve conter pelo menos um número',
+            'password.symbols' => 'O campo senha deve conter pelo menos um símbolo',
+
         ];
     }
      protected function failedValidation($validator): void
