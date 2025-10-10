@@ -6,13 +6,13 @@ enum Roles: int
 {
     case ADMIN = 1;
     case USER = 2;
-}
 
-// public function getIdForName(string $name): int
-// {
-//     return match ($name) {
-//         'admin' => Roles::ADMIN->value,
-//         'user' => Roles::USER->value,
-//         default => Roles::USER->value,
-//     };
-// }
+
+   public function label(): string
+    {
+        return match ($this) {
+            self::ADMIN => 'Administrador',
+            self::USER  => 'Usuario',
+        };
+    }
+}
