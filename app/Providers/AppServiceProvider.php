@@ -8,11 +8,14 @@ use App\Adapters\LdapAdapter;
 use App\Adapters\DomPdfAdapter;
 use App\Adapters\XssCleanAdapter;
 use App\Interfaces\LdapInterface;
+use App\Adapters\GoogleAuthAdapter;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use App\Interfaces\SanitizerInterface;
+use App\Interfaces\SocialAuthInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\PdfExporterInterface;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SanitizerInterface::class, XssCleanAdapter::class);
         $this->app->bind(LdapInterface::class, LdapAdapter::class);
         $this->app->bind(PdfExporterInterface::class, DomPdfAdapter::class);
+        $this->app->bind(SocialAuthInterface::class, GoogleAuthAdapter::class);
         // $this->app->register(L5SwaggerServiceProvider::class);
     }
 

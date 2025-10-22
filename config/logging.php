@@ -89,7 +89,7 @@ return [
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
                 'port' => env('PAPERTRAIL_PORT'),
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
+                'connectionString' => 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT'),
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
@@ -125,6 +125,16 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+        
+        'telegram' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'critical'),
+            'handler' => Monolog\Handler\TelegramBotHandler::class,
+            'with' => [
+                'apiKey' => env('TELEGRAM_API_KEY'),
+                'channel' => env('TELEGRAM_CHAT_ID'),
+            ],
         ],
 
     ],

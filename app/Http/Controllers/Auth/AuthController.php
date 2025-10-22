@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use Exception;
+use App\Http\Controllers\Controller;
 use App\Enums\Roles;
 use App\Enums\Status;
 use App\Models\Users\User;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Mail\WelcomeUserMail;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -32,6 +35,7 @@ class AuthController extends Controller
     });
 
         Log::info('Usuário criado com sucesso: ' . $user->name);
+         Mail::to($user->email)->send(new WelcomeUserMail($user));
         return response()->json(['message' => 'Usuário criado com sucesso! Aguarde ativação pelo Administrador', 'user' => $user], 201);
     }
 
@@ -42,8 +46,20 @@ class AuthController extends Controller
 
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
+
+            $user = User::where('email', $credentials['email'])->first();
+
+            if ($user && is_null($user->password) && !is_null($user->google_id)) {
+                return response()->json([
+                    'message' => 'Você se registrou com o Google. Deseja realizar login com o Google?',
+                    'action_required' => 'CREATE_PASSWORD_FOR_SOCIAL_ACCOUNT' // Código para o front-end
+                ], 422);
+}
+
                 Log::warning('Tentativa de login falhou para o email: ' . $credentials['email']);
-                return response()->json(['message' => 'Credenciais inválidas ou usuário inativo'], 401);
+
+
+                return response()->json(['message' => 'Credenciais inválidas ou usuário inativo','googleaccount'=>'realize login com google'], 401);
             }
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
             Log::error('Não foi possível criar o token: ' . $e->getMessage());
@@ -54,6 +70,7 @@ class AuthController extends Controller
         }
         Log::info('Usuário logado com sucesso: ' . $credentials['email']);
 
+        // Log::channel('telegram')->info('Usuário logado com sucesso: ' . $credentials['email']);s
         return response()->json([
             'user' => $credentials['email'],
         ], 200, ['access_token' => $token, 'token_type' => 'bearer']);

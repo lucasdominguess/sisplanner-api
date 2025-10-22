@@ -1,18 +1,20 @@
 <?php
 
 use App\Models\Users\User;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Users\UserController;
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\JwtMiddleware;
-use GuzzleHttp\Middleware;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\Users\UserController;
+use App\Http\Controllers\Auth\SocialiteController;
 
 
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthControsller::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login/google', [SocialiteController::class, 'handleGoogleCallback']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
 
@@ -24,7 +26,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     //         ->withoutMiddleware([AdminMiddleware::class])
     //         ->only('index', 'show');
     // });
-
+  Route::get
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/{user}', [UserController::class, 'update']);
 });
